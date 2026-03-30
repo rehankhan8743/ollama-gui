@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ollama-gui</string>
+    <string name="title_activity_main">ollama-gui</string>
+    <string name="package_name">com.ollaui.rehan</string>
+    <string name="custom_url_scheme">com.ollaui.rehan</string>
+</resources>

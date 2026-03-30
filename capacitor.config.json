@@ -1,0 +1,5 @@
+{
+  "appId": "com.ollaui.rehan",
+  "appName": "ollama-gui",
+  "webDir": "dist"
+}

@@ -14,6 +14,8 @@ jobs:
         run: yarn install
       - name: Build React App
         run: yarn build
+      - name: Install Capacitor Plugins
+        run: yarn add @capacitor/preferences @capacitor/filesystem
       - name: Copy web assets to Android
         run: npx cap copy android
       - uses: actions/setup-java@v4

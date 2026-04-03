@@ -1,5 +1,29 @@
 {
   "appId": "com.ollaui.rehan",
   "appName": "ollama-gui",
-  "webDir": "dist"
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "Preferences": {},
+    "Filesystem": {
+      "androidStorageLocation": "external"
+    }
+  },
+  "android": {
+    "minSdkVersion": 21,
+    "targetSdkVersion": 33,
+    "buildToolsVersion": "33.0.0",
+    "ndkVersion": "21.3.6528147",
+    "useLegacyBuildTools": false,
+    "useLegacyGradleWrapper": false,
+    "gradleVersion": "7.6.1",
+    "gradleWrapperVersion": "7.6.1",
+    "androidStudioVersion": "2021.3.1",
+    "compileSdkVersion": 33,
+    "supportLibVersion": "33.0.0"
+  },
+  "scripts": {
+    "android": "npx cap add android && npx cap open android",
+    "build:android": "npx cap copy android && npx cap sync android && npx cap run android"
+  }
 }

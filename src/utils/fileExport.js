@@ -8,30 +8,29 @@ export async function exportToFile(data, filename) {
 
   if (isNative) {
     try {
-      // Write to Downloads folder on Android
+      // Try Downloads folder first (Android public storage)
       const result = await Filesystem.writeFile({
         path: filename,
         data: jsonStr,
-        directory: Directory.Documents,
+        directory: Directory.Download,
         encoding: Encoding.UTF8,
+        recursive: true,
       });
-
-      // Also try Downloads for Android
-      try {
-        await Filesystem.writeFile({
-          path: `Download/${filename}`,
-          data: jsonStr,
-          directory: Directory.ExternalStorage,
-          encoding: Encoding.UTF8,
-          recursive: true,
-        });
-        return { success: true, path: `Download/${filename}` };
-      } catch (e) {
-        return { success: true, path: result.uri };
-      }
+      return { success: true, path: `Download/${filename}` };
     } catch (err) {
       console.error('Export error:', err);
-      throw new Error('Failed to save file: ' + err.message);
+      // Fallback: write to app Documents directory
+      try {
+        const fallback = await Filesystem.writeFile({
+          path: filename,
+          data: jsonStr,
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8,
+        });
+        return { success: true, path: fallback.uri };
+      } catch (fallbackErr) {
+        throw new Error('Failed to save file: ' + fallbackErr.message);
+      }
     }
   } else {
     // Browser fallback

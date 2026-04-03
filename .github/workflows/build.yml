@@ -31,17 +31,17 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci
-          npx cap sync android
+        run: npm ci
 
       - name: Generate App Icons
         run: |
           node generate-icons.cjs
 
+      - name: Sync Android project
+        run: npx cap sync android
+
       - name: Build web assets
-        run: |
-          npm run build
+        run: npm run build
 
       - name: Build APK
         working-directory: ./android

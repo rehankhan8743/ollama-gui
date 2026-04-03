@@ -7,27 +7,26 @@ export async function exportToFile(data, filename) {
   const jsonStr = JSON.stringify(data, null, 2);
 
   if (isNative) {
+    // Capacitor v7: use Documents (app-internal, user-accessible) with fallback to Data
     try {
-      // Try Downloads folder first (Android public storage)
       const result = await Filesystem.writeFile({
         path: filename,
         data: jsonStr,
-        directory: Directory.Download,
+        directory: Directory.Documents,
         encoding: Encoding.UTF8,
         recursive: true,
       });
-      return { success: true, path: `Download/${filename}` };
+      return { success: true, path: result.uri || `Documents/${filename}` };
     } catch (err) {
-      console.error('Export error:', err);
-      // Fallback: write to app Documents directory
+      console.log('Documents export failed, falling back to Data:', err.message);
       try {
         const fallback = await Filesystem.writeFile({
           path: filename,
           data: jsonStr,
-          directory: Directory.Documents,
+          directory: Directory.Data,
           encoding: Encoding.UTF8,
         });
-        return { success: true, path: fallback.uri };
+        return { success: true, path: fallback.uri || filename };
       } catch (fallbackErr) {
         throw new Error('Failed to save file: ' + fallbackErr.message);
       }

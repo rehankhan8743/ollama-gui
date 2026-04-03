@@ -7,8 +7,7 @@ export async function exportToFile(data, filename) {
   const jsonStr = JSON.stringify(data, null, 2);
 
   if (isNative) {
-    // Write to Documents (app-specific external storage on Android)
-    // This is accessible at Android/data/{appId}/Documents/filename
+    // Try Documents first (app-specific external storage)
     try {
       const result = await Filesystem.writeFile({
         path: filename,
@@ -16,10 +15,23 @@ export async function exportToFile(data, filename) {
         directory: Directory.Documents,
         encoding: Encoding.UTF8,
       });
-      return { success: true, path: result.uri };
+      return { success: true, path: result.uri, location: 'Documents' };
     } catch (docErr) {
-      console.error('Documents export failed:', docErr);
-      throw new Error('Failed to save file: ' + (docErr.message || 'Unknown error'));
+      console.log('Documents export failed, falling back to Data:', docErr.message);
+
+      // Fallback: app internal Data directory (always works, private)
+      try {
+        const result = await Filesystem.writeFile({
+          path: filename,
+          data: jsonStr,
+          directory: Directory.Data,
+          encoding: Encoding.UTF8,
+        });
+        return { success: true, path: result.uri, location: 'Data' };
+      } catch (dataErr) {
+        console.error('Data export also failed:', dataErr);
+        throw new Error('Failed to save file: ' + (dataErr.message || 'Unknown error'));
+      }
     }
   } else {
     // Browser fallback

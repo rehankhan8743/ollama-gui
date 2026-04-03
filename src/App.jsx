@@ -160,10 +160,14 @@ function App() {
 
     try {
       const result = await exportToFile(dataToExport, filename);
-      if (result.success && result.path) {
-        alert('✅ Chat exported!\n\nFile saved to:\n' + result.path + '\n\nUse a file manager to access it (Android/data/com.ollaui.rehan/files/Documents/).');
+      if (result.success) {
+        if (result.location === 'Data') {
+          alert('Export saved successfully!\n\nFile stored: ' + result.path);
+        } else {
+          alert('Chat exported successfully!\n\nFile saved to:\n' + result.path + '\n\nUse a file manager to access it (Android/data/com.ollaui.rehan/files/Documents/)');
+        }
       } else {
-        alert('✅ Chat exported successfully!');
+        alert('Export completed successfully!');
       }
     } catch (err) {
       alert('Export failed: ' + err.message);

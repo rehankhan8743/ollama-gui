@@ -1,5 +1,6 @@
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
+import { Share } from '@capacitor/share';
 
 const isNative = Capacitor.isNativePlatform();
 
@@ -7,29 +8,19 @@ export async function exportToFile(data, filename) {
   const jsonStr = JSON.stringify(data, null, 2);
 
   if (isNative) {
-    // Capacitor v7: use Documents (app-internal, user-accessible) with fallback to Data
+    // Write to Documents (app-specific external storage on Android)
+    // This is accessible at Android/data/{appId}/Documents/filename
     try {
       const result = await Filesystem.writeFile({
         path: filename,
         data: jsonStr,
         directory: Directory.Documents,
         encoding: Encoding.UTF8,
-        recursive: true,
       });
-      return { success: true, path: result.uri || `Documents/${filename}` };
-    } catch (err) {
-      console.log('Documents export failed, falling back to Data:', err.message);
-      try {
-        const fallback = await Filesystem.writeFile({
-          path: filename,
-          data: jsonStr,
-          directory: Directory.Data,
-          encoding: Encoding.UTF8,
-        });
-        return { success: true, path: fallback.uri || filename };
-      } catch (fallbackErr) {
-        throw new Error('Failed to save file: ' + fallbackErr.message);
-      }
+      return { success: true, path: result.uri };
+    } catch (docErr) {
+      console.error('Documents export failed:', docErr);
+      throw new Error('Failed to save file: ' + (docErr.message || 'Unknown error'));
     }
   } else {
     // Browser fallback

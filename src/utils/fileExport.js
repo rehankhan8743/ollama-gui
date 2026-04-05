@@ -8,34 +8,30 @@ export async function exportToFile(data, filename) {
   const jsonStr = JSON.stringify(data, null, 2);
 
   if (isNative) {
-    // Write file to cache directory first
-    const cacheDir = Directory.Cache;
-    const filePath = `${cacheDir}/${filename}`;
-
     try {
-      // Write JSON to cache
+      // Write JSON to cache directory
       await Filesystem.writeFile({
-        path: filePath,
+        path: filename,
         data: jsonStr,
-        directory: cacheDir,
+        directory: Directory.Cache,
         encoding: Encoding.UTF8,
       });
 
-      // Get the URI for sharing
-      const fileUri = await Filesystem.getUri({
-        path: filePath,
-        directory: cacheDir,
+      // Get URI for sharing
+      const uri = await Filesystem.getUri({
+        path: filename,
+        directory: Directory.Cache,
       });
 
       // Share the file
       await Share.share({
         title: filename,
         text: 'Ollama GUI Chat Export',
-        url: fileUri.uri,
+        url: uri.uri,
         dialogTitle: 'Share Chat Export',
       });
 
-      return { success: true, path: fileUri.uri, shared: true };
+      return { success: true, path: uri.uri, shared: true };
     } catch (err) {
       console.error('Export failed:', err);
       throw new Error('Failed to export: ' + (err.message || 'Unknown error'));

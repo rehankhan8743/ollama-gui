@@ -37,11 +37,11 @@ jobs:
         run: |
           node generate-icons.cjs
 
-      - name: Sync Android project
-        run: npx cap sync android
-
       - name: Build web assets
         run: npm run build
+
+      - name: Sync Android project
+        run: npx cap sync android
 
       - name: Build APK
         working-directory: ./android

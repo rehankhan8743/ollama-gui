@@ -80,14 +80,14 @@ function generateLlamaIconSVG() {
           fill="white" stroke="#111" stroke-width="22"/>
   </g>
 
-  <!-- SOHEL text with gradient -->
-  <text x="512" y="960"
+  <!-- SR text with gradient on belly -->
+  <text x="512" y="790"
         font-family="'Arial Black', Arial, sans-serif"
-        font-size="148"
+        font-size="100"
         font-weight="900"
         text-anchor="middle"
         fill="url(#textGrad)"
-        letter-spacing="8">SOHEL</text>
+        letter-spacing="4">SR</text>
 </svg>`;
 }
 

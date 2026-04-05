@@ -6,7 +6,7 @@
   "plugins": {
     "Preferences": {},
     "Filesystem": {
-      "androidStorageLocation": "external"
+      "androidStorageLocation": "data"
     }
   },
   "android": {

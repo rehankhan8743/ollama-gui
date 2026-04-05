@@ -7,31 +7,18 @@ export async function exportToFile(data, filename) {
   const jsonStr = JSON.stringify(data, null, 2);
 
   if (isNative) {
-    // Try Documents first (app-specific external storage)
+    // Use app internal Data directory (always works, no permissions needed)
     try {
       const result = await Filesystem.writeFile({
         path: filename,
         data: jsonStr,
-        directory: Directory.Documents,
+        directory: Directory.Data,
         encoding: Encoding.UTF8,
       });
-      return { success: true, path: result.uri, location: 'Documents' };
-    } catch (docErr) {
-      console.log('Documents export failed, falling back to Data:', docErr.message);
-
-      // Fallback: app internal Data directory (always works, private)
-      try {
-        const result = await Filesystem.writeFile({
-          path: filename,
-          data: jsonStr,
-          directory: Directory.Data,
-          encoding: Encoding.UTF8,
-        });
-        return { success: true, path: result.uri, location: 'Data' };
-      } catch (dataErr) {
-        console.error('Data export also failed:', dataErr);
-        throw new Error('Failed to save file: ' + (dataErr.message || 'Unknown error'));
-      }
+      return { success: true, path: result.uri, location: 'Data' };
+    } catch (err) {
+      console.error('Data export failed:', err);
+      throw new Error('Failed to save file: ' + (err.message || 'Unknown error'));
     }
   } else {
     // Browser fallback

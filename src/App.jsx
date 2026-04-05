@@ -164,7 +164,7 @@ function App() {
         if (result.location === 'Data') {
           alert('Export saved successfully!\n\nFile stored: ' + result.path);
         } else {
-          alert('Chat exported successfully!\n\nFile saved to:\n' + result.path + '\n\nUse a file manager to access it (Android/data/com.ollaui.rehan/files/Documents/)');
+          alert('Export saved successfully!\n\nFile stored: ' + result.path);
         }
       } else {
         alert('Export completed successfully!');

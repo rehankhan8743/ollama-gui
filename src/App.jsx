@@ -161,10 +161,10 @@ function App() {
     try {
       const result = await exportToFile(dataToExport, filename);
       if (result.success) {
-        if (result.location === 'Data') {
-          alert('Export saved successfully!\n\nFile stored: ' + result.path);
+        if (result.shared) {
+          alert('Export ready! Share dialog should open.');
         } else {
-          alert('Export saved successfully!\n\nFile stored: ' + result.path);
+          alert('Chat exported successfully!');
         }
       } else {
         alert('Export completed successfully!');

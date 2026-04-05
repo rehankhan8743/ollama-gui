@@ -1,4 +1,5 @@
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import { Capacitor } from '@capacitor/core';
 
 const isNative = Capacitor.isNativePlatform();
@@ -7,18 +8,37 @@ export async function exportToFile(data, filename) {
   const jsonStr = JSON.stringify(data, null, 2);
 
   if (isNative) {
-    // Use app internal Data directory (always works, no permissions needed)
+    // Write file to cache directory first
+    const cacheDir = Directory.Cache;
+    const filePath = `${cacheDir}/${filename}`;
+
     try {
-      const result = await Filesystem.writeFile({
-        path: filename,
+      // Write JSON to cache
+      await Filesystem.writeFile({
+        path: filePath,
         data: jsonStr,
-        directory: Directory.Data,
+        directory: cacheDir,
         encoding: Encoding.UTF8,
       });
-      return { success: true, path: result.uri, location: 'Data' };
+
+      // Get the URI for sharing
+      const fileUri = await Filesystem.getUri({
+        path: filePath,
+        directory: cacheDir,
+      });
+
+      // Share the file
+      await Share.share({
+        title: filename,
+        text: 'Ollama GUI Chat Export',
+        url: fileUri.uri,
+        dialogTitle: 'Share Chat Export',
+      });
+
+      return { success: true, path: fileUri.uri, shared: true };
     } catch (err) {
-      console.error('Data export failed:', err);
-      throw new Error('Failed to save file: ' + (err.message || 'Unknown error'));
+      console.error('Export failed:', err);
+      throw new Error('Failed to export: ' + (err.message || 'Unknown error'));
     }
   } else {
     // Browser fallback
